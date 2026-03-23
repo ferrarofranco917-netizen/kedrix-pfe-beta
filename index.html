@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="it" class="kedrix-preboot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Kedrix - Personal Finance Engine</title>
+    <link rel="stylesheet" href="style.css?v=20260313v231">
+    <link rel="manifest" href="./manifest.json?v=20260322_github_hotfix_v3">
+    <meta name="theme-color" content="#16181b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kedrix">
+    <meta name="description" content="Gestisci le tue finanze da stipendio a stipendio con l'assistente AI">
+    <meta name="format-detection" content="telephone=no">
+
+    <style>
+        html.kedrix-preboot body { visibility: hidden; }
+    </style>
+    <script>
+      window.KEDRIX_BOOTSTRAP_TRANSLATIONS = {
+        it: {
+          betaSettingsTitle: 'Build beta',
+          betaSettingsText: 'Build controllata per tester. Accesso verificato tramite licenza beta e attivazione remota.',
+          betaAccessKicker: 'Kedrix — Accesso beta',
+          betaAccessTitle: 'Verifica accesso beta',
+          betaAccessText: 'Questa build è riservata ai tester autorizzati. Inserisci l’email approvata per continuare.',
+          betaAccessLabel: 'Email autorizzata',
+          betaAccessSubmit: 'Verifica accesso',
+          wiseForecastTitle: 'WiseForecast',
+          wiseForecastSubtitle: 'Saldo stimato a fine periodo se mantieni il ritmo attuale.',
+          wiseForecastEndLabel: 'Saldo stimato fine periodo',
+          wiseForecastStatus: 'Chiusura in equilibrio',
+          wiseForecastAvgLabel: 'Media variabili / giorno',
+          wiseForecastVariableProjectionLabel: 'Spesa variabile prevista',
+          wiseForecastRiskDayLabel: 'Giorno di rischio finanziario',
+          wiseForecastRiskDayValue: '✔ Con questo ritmo chiudi il periodo positivo',
+          wiseForecastSafeDaysLabel: 'Giorni sicuri',
+          wiseForecastSafeDaysValue: '✔ Con questo ritmo sei tranquillo per tutto il periodo'
+        },
+        en: {
+          betaSettingsTitle: 'Beta build',
+          betaSettingsText: 'Controlled build for testers. Access is verified through beta licensing and remote activation.',
+          betaAccessKicker: 'Kedrix — Beta Access',
+          betaAccessTitle: 'Verify beta access',
+          betaAccessText: 'This build is reserved for authorized testers. Enter the approved email to continue.',
+          betaAccessLabel: 'Approved email',
+          betaAccessSubmit: 'Verify access',
+          wiseForecastTitle: 'WiseForecast',
+          wiseForecastSubtitle: 'Estimated end-of-period balance if you keep the current pace.',
+          wiseForecastEndLabel: 'Estimated end balance',
+          wiseForecastStatus: 'Break-even close',
+          wiseForecastAvgLabel: 'Variable avg / day',
+          wiseForecastVariableProjectionLabel: 'Expected variable spending',
+          wiseForecastRiskDayLabel: 'Financial risk day',
+          wiseForecastRiskDayValue: '✔ With this pace you close the period positive',
+          wiseForecastSafeDaysLabel: 'Safe days',
+          wiseForecastSafeDaysValue: '✔ With this pace you are safe for the whole period'
+        },
+        es: {
+          betaSettingsTitle: 'Versión beta',
+          betaSettingsText: 'Build controlada para testers. El acceso se verifica mediante licencia beta y activación remota.',
+          betaAccessKicker: 'Kedrix — Acceso beta',
+          betaAccessTitle: 'Verifica acceso beta',
+          betaAccessText: 'Esta build está reservada para testers autorizados. Introduce el correo aprobado para continuar.',
+          betaAccessLabel: 'Correo autorizado',
+          betaAccessSubmit: 'Verificar acceso',
+          wiseForecastTitle: 'WiseForecast',
+          wiseForecastSubtitle: 'Saldo estimado al final del período si mantienes el ritmo actual.',
+          wiseForecastEndLabel: 'Saldo estimado final',
+          wiseForecastStatus: 'Cierre en equilibrio',
+          wiseForecastAvgLabel: 'Media variables / día',
+          wiseForecastVariableProjectionLabel: 'Gasto variable previsto',
+          wiseForecastRiskDayLabel: 'Día de riesgo financiero',
+          wiseForecastRiskDayValue: '✔ Con este ritmo cierras el período en positivo',
+          wiseForecastSafeDaysLabel: 'Días seguros',
+          wiseForecastSafeDaysValue: '✔ Con este ritmo estás tranquilo durante todo el período'
+        },
+        fr: {
+          betaSettingsTitle: 'Version bêta',
+          betaSettingsText: 'Build contrôlée pour les testeurs. L’accès est vérifié via licence bêta et activation à distance.',
+          betaAccessKicker: 'Kedrix — Accès bêta',
+          betaAccessTitle: 'Vérifier l’accès bêta',
+          betaAccessText: 'Cette build est réservée aux testeurs autorisés. Saisissez l’e-mail approuvé pour continuer.',
+          betaAccessLabel: 'E-mail autorisé',
+          betaAccessSubmit: 'Vérifier l’accès',
+          wiseForecastTitle: 'WiseForecast',
+          wiseForecastSubtitle: 'Solde estimé en fin de période si vous gardez le rythme actuel.',
+          wiseForecastEndLabel: 'Solde estimé final',
+          wiseForecastStatus: 'Clôture à l’équilibre',
+          wiseForecastAvgLabel: 'Moyenne variables / jour',
+          wiseForecastVariableProjectionLabel: 'Dépense variable prévue',
+          wiseForecastRiskDayLabel: 'Jour de risque financier',
+          wiseForecastRiskDayValue: '✔ Avec ce rythme vous terminez la période en positif',
+          wiseForecastSafeDaysLabel: 'Jours sûrs',
+          wiseForecastSafeDaysValue: '✔ Avec ce rythme vous êtes tranquille pour toute la période'
+        }
+      };
+    </script>
+    <script src="runtime-config.js?v=20260322_cf1"></script>
+    <script src="runtime-i18n.js?v=20260322_ghclean1"></script>
+    
+    <!-- Geist / Dark Premium (Inter fallback per numeri) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+            <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- SheetJS per leggere file Excel -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- Meta tags social -->
+    <meta property="og:title" content="Kedrix">
+    <meta property="og:description" content="Gestione finanziaria intelligente con assistente AI">
+    <meta property="og:image" content="./assets/modern-logo-kedrix-pfe.svg">
+    <meta property="og:url" content="https://budgetkedrix.app">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kedrix">
+    <meta name="twitter:description" content="Gestisci le tue finanze con intelligenza artificiale">
+    <meta name="twitter:image" content="./assets/modern-logo-kedrix-pfe.svg">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icon-192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16.png">
+    <link rel="mask-icon" href="./assets/icon-512.png" color="#38bdf8">
+    
+    <!-- Forza aggiornamento cache -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="kedrix-beta-registry-endpoint" content="https://script.google.com/macros/s/AKfycbxNM0y7ohRqW3r5c4rUP3chtvf-e-0fe3KHuZ04nLmmQzCxz4WaYy1OmATcHw08CWqG/exec">
+    <meta name="kedrix-tracking-endpoint" content="https://script.google.com/macros/s/AKfycbxNM0y7ohRqW3r5c4rUP3chtvf-e-0fe3KHuZ04nLmmQzCxz4WaYy1OmATcHw08CWqG/exec">
+    <meta name="kedrix-build" content="20260322_refactor_i18n_v1a">
+    <meta name="kedrix-channel" content="beta">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header header--surgical">
+            <div class="brand-lockup brand-lockup--logo brand-lockup--surgical" aria-label="Kedrix logo">
+                <div class="brand-logo-frame">
+                    <img src="./assets/modern-logo-kedrix-pfe.svg" alt="Kedrix PFE" class="brand-logo-full" loading="eager" decoding="async">
+                </div>
+            </div>
+            <div class="header-actions header-actions--stacked">
+                <div class="header-actions-top">
+                    <div id="licenseStatus" class="license-status free beta-combo-status">
+                        <span class="badge free beta-combo">FREE • BETA V1</span>
+                    </div>
+                    <button id="themeToggle" class="theme-btn" aria-label="Cambia tema">Dark</button>
+                </div>
+            </div>
+        </div>
+        <p class="subtitle" id="subtitle">Stipendio a stipendio — gestione intelligente con AI</p>
+
+        <!-- PREMIUM BANNER -->
+        <div id="premiumBanner" class="premium-banner premium-banner--fintech" style="display: none;">
+            <div class="premium-content premium-content--fintech">
+                <div class="premium-badge">Premium</div>
+                <div class="premium-text premium-text--fintech">
+                    <h3 data-i18n="upgradeBanner">Upgrade a Premium</h3>
+                    <p data-i18n="upgradeBannerText">Sblocca funzionalità illimitate e l'assistente AI!</p>
+                    <div class="premium-mini-points">
+                        <span>∞ categorie</span>
+                        <span>AI</span>
+                        <span>Export</span>
+                    </div>
+                </div>
+                <button id="upgradeBtn" class="premium-btn premium-btn--fintech" data-i18n="upgrade">Upgrade</button>
+            </div>
+        </div>
+
+        <!-- TOAST -->
+        <div id="toast" class="toast">Operazione completata</div>
+
+        <!-- HERO HOME -->
+        <div class="section-card summary-card home-hero-card" data-tab="home">
+            <div class="hero-card-header">
+                <div>
+                    <div class="hero-eyebrow" data-i18n="heroBudgetEyebrow">BUDGET GIORNALIERO</div>
+                    <div class="hero-period-line" id="periodInfo">Periodo: 2026-02-22 → 2026-03-22</div>
+                </div>
+                <button id="privacyToggle" class="privacy-toggle-btn" type="button" aria-pressed="true" data-i18n="privacyHide">Nascondi importi</button>
+            </div>
+            <div class="hero-main sensitive-amount" id="dailyBudget">0,00 €</div>
+            <div class="hero-meta-grid">
+                <div class="hero-meta-card">
+                    <span class="hero-meta-label" id="remainingLabel">Rimanenza periodo</span>
+                    <div class="hero-meta-inline">
+                        <span class="hero-meta-value sensitive-amount" id="remaining">0,00 €</span>
+                        <span id="remainingStatus" class="status-icon" title="Saldo positivo"></span>
+                    </div>
+                </div>
+                <div class="hero-meta-card">
+                    <span class="hero-meta-label" id="daysLabel">Giorni rimasti</span>
+                    <span class="hero-meta-value" id="daysLeft">28</span>
+                </div>
+                <div class="hero-meta-card">
+                    <span class="hero-meta-label" id="spendingPaceLabel">Ritmo di spesa</span>
+                    <span class="hero-meta-value" id="spendingPaceValue">—</span>
+                </div>
+                <div class="hero-meta-card">
+                    <span class="hero-meta-label" id="savingsPotLabel">Piano risparmi</span>
+                    <span class="hero-meta-value sensitive-amount" id="savingsPot">0,00 €</span>
+                    <small class="trend-indicator sensitive-amount" id="savingsProjected"></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS HOME -->
+        <div class="section-card home-quick-card home-priority-card" data-tab="home" id="homeQuickAddCard">
+            <div class="section-header compact-header">
+                <h2><span data-i18n="homeQuickActionsTitle">Inserimento rapido variabili</span></h2>
+            </div>
+            <div class="section-content">
+                <div class="home-priority-kicker" data-i18n="homePriorityKicker">Appena apri Kedrix, parti da qui</div>
+                <div class="home-quick-actions">
+                    <button id="homeVoiceBtn" class="voice-btn home-voice-btn">
+                        <span data-i18n="homeVoiceVariableButton">Inserisci variabile con voce</span>
+                    </button>
+                    <button id="homeManualBtn" class="btn-secondary home-manual-btn"><span data-i18n="homeManualOpen">Apri inserimento manuale</span></button>
+                </div>
+                <div id="homeVoiceStatus" class="voice-status" data-i18n="micVariable">Tocca per parlare</div>
+                <div class="home-quick-hint" data-i18n="voiceExampleHint">Es.: "12 euro bar"</div>
+            </div>
+        </div>
+
+        <div class="period-source" id="periodSource" data-tab="home"></div>
+
+        <div class="section-card daily-checkin-card" data-tab="home" id="dailyCheckInCard">
+            <div class="section-content">
+                <div class="daily-checkin-head">
+                    <div class="daily-checkin-badge"></div>
+                    <div class="daily-checkin-copy">
+                        <div class="daily-checkin-title" id="dailyCheckInTitle">WiseMind™ · Check di oggi</div>
+                        <div class="daily-checkin-subtitle sensitive-insight" id="dailyCheckInSubtitle">Lettura rapida del tuo ritmo finanziario quotidiano.</div>
+                    </div>
+                </div>
+                <div class="daily-checkin-value positive" id="dailyCheckInValue">✔ Nessuna spesa variabile registrata oggi. Ottimo controllo fin qui.</div>
+            </div>
+        </div>
+
+        <!-- WISEFORECAST HOME -->
+        <div class="section-card forecast-card" data-tab="home" id="wiseForecastCard">
+            <div class="section-header compact-header">
+                <h2 id="wiseForecastTitle" data-bootstrap-i18n="wiseForecastTitle">WiseForecast</h2>
+            </div>
+            <div class="section-content">
+                <p class="forecast-subtitle sensitive-insight" id="wiseForecastSubtitle" data-bootstrap-i18n="wiseForecastSubtitle">Saldo stimato a fine periodo se mantieni il ritmo attuale.</p>
+                <div class="forecast-grid forecast-grid-evolved">
+                    <div class="forecast-main-card">
+                        <span class="forecast-label" id="wiseForecastEndLabel" data-bootstrap-i18n="wiseForecastEndLabel">Saldo stimato fine periodo</span>
+                        <div class="forecast-value sensitive-amount" id="wiseForecastValue">0,00 €</div>
+                        <div class="forecast-status neutral" id="wiseForecastStatus" data-bootstrap-i18n="wiseForecastStatus">Chiusura in equilibrio</div>
+                    </div>
+                    <div class="forecast-metrics-stack">
+                        <div class="forecast-side-card forecast-metric-card">
+                            <span class="forecast-label" id="wiseForecastAvgLabel" data-bootstrap-i18n="wiseForecastAvgLabel">Media variabili / giorno</span>
+                            <div class="forecast-side-value sensitive-amount" id="wiseForecastAvgValue">0,00 €</div>
+                        </div>
+                        <div class="forecast-side-card forecast-metric-card forecast-projection-card">
+                            <span class="forecast-label" id="wiseForecastVariableProjectionLabel" data-bootstrap-i18n="wiseForecastVariableProjectionLabel">Spesa variabile prevista</span>
+                            <div class="forecast-side-value sensitive-amount" id="wiseForecastVariableProjectionValue">0,00 €</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="safe-to-spend-card">
+                    <div class="safe-to-spend-head">
+                        <span class="forecast-label" id="safeToSpendLabel">Spesa sicura oggi</span>
+                        <span class="safe-to-spend-hint sensitive-insight" id="safeToSpendHint">Quanto puoi spendere oggi senza compromettere il periodo.</span>
+                    </div>
+                    <div class="safe-to-spend-value sensitive-amount positive" id="safeToSpendValue">Puoi spendere oggi fino a 0,00 €</div>
+                </div>
+                <div class="forecast-risk-stack">
+                    <div class="forecast-risk-day-card">
+                        <span class="forecast-label" id="wiseForecastRiskDayLabel" data-bootstrap-i18n="wiseForecastRiskDayLabel">Giorno di rischio finanziario</span>
+                        <div class="forecast-risk-day-value positive" id="wiseForecastRiskDayValue" data-bootstrap-i18n="wiseForecastRiskDayValue">✔ Con questo ritmo chiudi il periodo positivo</div>
+                    </div>
+                    <div class="forecast-risk-day-card forecast-safe-days-card">
+                        <span class="forecast-label" id="wiseForecastSafeDaysLabel" data-bootstrap-i18n="wiseForecastSafeDaysLabel">Giorni sicuri</span>
+                        <div class="forecast-risk-day-value positive" id="wiseForecastSafeDaysValue" data-bootstrap-i18n="wiseForecastSafeDaysValue">✔ Con questo ritmo sei tranquillo per tutto il periodo</div>
+                    </div>
+                </div>
+                <div class="forecast-simulator-card">
+                    <div class="forecast-simulator-head">
+                        <span class="forecast-label forecast-simulator-title" id="forecastSimulatorTitle">Simula una spesa</span>
+                        <span class="forecast-simulator-hint sensitive-insight" id="forecastSimulatorHint">Anteprima veloce: non modifica i dati reali.</span>
+                    </div>
+                    <input type="text" inputmode="decimal" class="forecast-simulator-input" id="forecastSimulatorInput" placeholder="Es. 120">
+                    <div class="forecast-simulator-empty sensitive-insight" id="forecastSimulatorEmpty">Inserisci un importo per vedere l'impatto immediato.</div>
+                    <div class="forecast-simulator-grid">
+                        <div class="forecast-simulator-metric">
+                            <span class="forecast-label" id="forecastSimulatorForecastLabel">Nuovo forecast</span>
+                            <div class="forecast-simulator-value sensitive-amount positive" id="forecastSimulatorForecastValue">0,00 €</div>
+                        </div>
+                        <div class="forecast-simulator-metric">
+                            <span class="forecast-label" id="forecastSimulatorBudgetLabel">Nuovo budget giornaliero</span>
+                            <div class="forecast-simulator-value sensitive-amount positive" id="forecastSimulatorBudgetValue">0,00 €</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WISESCORE HOME -->
+        <div class="section-card home-score-card" data-tab="home" id="wiseScoreHomeCard">
+            <div class="section-header">
+                <h2 id="wiseScoreHomeTitle">WiseScore™</h2>
+            </div>
+            <div class="section-content">
+                <div class="wise-score-home">
+                    <div class="wise-score-main">
+                        <div class="wise-score-ring">
+                            <div class="wise-score-value sensitive-amount" id="wiseScoreValue">—</div>
+                            <div class="wise-score-label">/100</div>
+                        </div>
+                        <div class="wise-score-summary">
+                            <div class="wise-score-status" id="wiseScoreStatus">In attesa dati</div>
+                            <div class="wise-score-meta sensitive-insight" id="wiseScoreMeta">Inserisci entrate e spese per calcolare il punteggio.</div>
+                        </div>
+                    </div>
+
+                    <div class="wise-pillars">
+                        <div class="wise-pillar-row">
+                            <div class="wise-pillar-top">
+                                <span class="wise-pillar-name">Stability</span>
+                                <span class="wise-pillar-value" id="pillarStabilityValue">—</span>
+                            </div>
+                            <div class="wise-pillar-bar">
+                                <div class="wise-pillar-fill" id="pillarStabilityFill" style="width:0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="wise-pillar-row">
+                            <div class="wise-pillar-top">
+                                <span class="wise-pillar-name">Discipline</span>
+                                <span class="wise-pillar-value" id="pillarDisciplineValue">—</span>
+                            </div>
+                            <div class="wise-pillar-bar">
+                                <div class="wise-pillar-fill" id="pillarDisciplineFill" style="width:0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="wise-pillar-row">
+                            <div class="wise-pillar-top">
+                                <span class="wise-pillar-name">Resilience</span>
+                                <span class="wise-pillar-value" id="pillarResilienceValue">—</span>
+                            </div>
+                            <div class="wise-pillar-bar">
+                                <div class="wise-pillar-fill" id="pillarResilienceFill" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB BAR -->
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="home" data-i18n="tabHome">Home</button>
+            <button class="tab-btn" data-tab="incomes" data-i18n="tabIncomes">Entrate</button>
+            <button class="tab-btn" data-tab="fixed" data-i18n="tabFixed">Fisse</button>
+            <button class="tab-btn" data-tab="variable" data-i18n="tabVariable">Variabili</button>
+            <button class="tab-btn" data-tab="analysis" data-i18n="tabAnalysis">Analisi</button>
+            <button class="tab-btn" data-tab="ai" data-i18n="tabAI">AI</button>
+            <button class="tab-btn" data-tab="tools" data-i18n="tabTools">Strumenti</button>
+        </div>
+
+        <!-- ENTRATE -->
+        <div class="section-card" data-tab="incomes">
+            <div class="section-header">
+                <h2 id="incomesTitle" data-i18n="incomes">Entrate del periodo</h2>
+            </div>
+            <div class="section-content">
+                <div id="incomeList" class="expenses-list">
+                    <p class="chart-note" data-i18n="noIncome">Nessuna entrata</p>
+                </div>
+                <div class="input-group-row">
+                    <div class="input-with-mic" style="flex: 2;">
+                        <input type="text" id="incomeDesc" placeholder="" data-i18n-placeholder="incomeDesc">
+                    </div>
+                    <div class="input-with-mic" style="flex: 1;">
+                        <input type="number" id="incomeAmount" placeholder="" data-i18n-placeholder="incomeAmount" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="input-group-row">
+                    <div style="flex: 1;">
+                        <label for="incomeDate" id="incomeDateLabel" data-i18n="incomeDateLabel">Data</label>
+                        <input type="date" id="incomeDate" class="date-input" value="">
+                    </div>
+                </div>
+                <button class="btn-secondary" id="addIncomeBtn" data-i18n="addIncome">Aggiungi entrata</button>
+                <p class="help-text help-text-income"><span id="totalIncomeLabel" data-i18n="totalIncome">Totale entrate</span>: <span id="totalIncomeDisplay" class="sensitive-amount">0,00 €</span></p>
+            </div>
+        </div>
+        
+        <!-- SPESE FISSE -->
+        <div class="section-card" data-tab="fixed">
+            <h2 id="fixedTitle" data-i18n="fixed">Spese fisse mensili</h2>
+            <div class="section-content">
+                <div id="fixedExpensesList" class="expenses-list">
+                    <p class="chart-note" data-i18n="noFixed">Nessuna spesa fissa</p>
+                </div>
+                <div class="input-group-row">
+                    <input type="text" id="fixedName" placeholder="" data-i18n-placeholder="fixedName" style="flex: 2;">
+                    <input type="number" id="fixedAmount" placeholder="" data-i18n-placeholder="fixedAmount" step="0.01" style="flex: 1;">
+                </div>
+                <div class="input-group-row">
+                    <div class="input-group half">
+                        <label id="dayLabel" data-i18n="dayLabel">Giorno del mese</label>
+                        <input type="number" id="fixedDay" placeholder="" data-i18n-placeholder="fixedDay" min="1" max="31">
+                    </div>
+                    <div class="input-group half">
+                        <label id="endDateLabel" data-i18n="endDateLabel">Data scadenza (fine)</label>
+                        <input type="date" id="fixedEndDate">
+                        <small class="date-hint" id="dateHintFixed" data-i18n="dateHint"></small>
+                    </div>
+                </div>
+                <div class="voice-fixed-container">
+                    <button id="micFixedBtn" class="voice-fixed-btn">
+                        <span class="bw-voice-icon" aria-hidden="true">🎙</span><span id="micFixedText" data-i18n="fixedVoiceButton">Inserisci spesa fissa con voce</span>
+                    </button>
+                    <div id="fixedVoiceStatus" class="voice-status" data-i18n="micFixed">Tocca e di' tutto in una frase (es. "Mutuo 500 euro giorno 27 scadenza 31 12 2030")</div>
+                </div>
+                <div class="button-group">
+                    <button class="btn-secondary" id="addFixedBtn" data-i18n="addFixed">Aggiungi spesa fissa</button>
+                    <button class="btn-danger" id="resetFixedBtn" data-i18n="resetFixed">Reset spese fisse</button>
+                </div>
+                <p class="help-text help-text-fixed" id="fixedHelp" data-i18n="helpFixed">Verrà conteggiata automaticamente ogni mese fino alla scadenza</p>
+            </div>
+        </div>
+
+        <!-- SPESE VARIABILI -->
+        <div class="section-card" data-tab="variable">
+            <h2 id="variableTitle" data-i18n="variable">Spese variabili</h2>
+            <div class="section-content">
+                <div class="date-selector">
+                    <label id="dateLabel" data-i18n="dateLabel">Seleziona data:</label>
+                    <input type="date" id="expenseDate" class="date-input">
+                    <small class="date-hint" id="dateHintVariable" data-i18n="dateHint"></small>
+                </div>
+                <div class="toggle-row" id="showAllExpensesRow">
+                    <label class="toggle-label">
+                        <input type="checkbox" id="showAllExpensesToggle">
+                        <span id="showAllExpensesLabel" data-i18n="showAllExpenses">Mostra tutte le spese del periodo</span>
+                    </label>
+                </div>
+                        <!-- BARRA DI RICERCA (da aggiungere) -->
+        <div class="search-container" style="margin: 15px 0; padding: 15px; background: var(--bg-color); border-radius: 12px; border: 1px solid var(--border);">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 2; min-width: 200px; position: relative;">
+                    <span class="search-prefix" aria-hidden="true"></span>
+                    <input type="text" id="searchExpenses" placeholder="" data-i18n-placeholder="searchPlaceholder" 
+                           style="width: 100%; padding: 12px 12px 12px 40px; border: 1px solid var(--border); border-radius: 30px; background: var(--card-bg);">
+                </div>
+                <select id="searchCategory" style="flex: 1; min-width: 150px; padding: 12px; border-radius: 30px; border: 1px solid var(--border);">
+                    <option value="all" data-i18n="allCategories">Tutte le categorie</option>
+                    <!-- Le opzioni verranno popolate dinamicamente -->
+                </select>
+                <button id="resetSearchBtn" class="btn-text" style="padding: 12px 20px; white-space: nowrap;" data-i18n="clearFilters">
+                    ✕ Cancella filtri
+                </button>
+            </div>
+            <div style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);" id="searchResultsCount"></div>
+        </div>
+                <div id="variableExpensesList" class="expenses-list">
+                    <p class="chart-note" data-i18n="noVariable">Nessuna spesa in questo giorno</p>
+                </div>
+                <div class="voice-input-container">
+                    <div class="input-group-row bw-category-entry-row">
+                        <input type="text" id="expenseName" placeholder="" data-i18n-placeholder="expenseName">
+                        <input type="number" id="expenseAmount" placeholder="" data-i18n-placeholder="expenseAmount" step="0.01">
+                        <div class="bw-category-stack">
+                        <select id="expenseCategory" class="bw-parent-category-select">
+                            <option value="Alimentari" data-i18n="categoryAlimentari">Alimentari</option>
+                            <option value="Trasporti" data-i18n="categoryTrasporti">Trasporti</option>
+                            <option value="Svago" data-i18n="categorySvago">Svago</option>
+                            <option value="Salute" data-i18n="categorySalute">Salute</option>
+                            <option value="Abbigliamento" data-i18n="categoryAbbigliamento">Abbigliamento</option>
+                            <option value="Altro" data-i18n="categoryAltro">Altro</option>
+                        </select>
+                        <select id="expenseSubCategory" class="bw-subcategory-select">
+                            <option value="" data-i18n="expenseSubCategory">Sottocategoria (facoltativa)</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="voice-row">
+                        <button id="voiceBtn" class="voice-btn">
+                            <span class="bw-voice-icon" aria-hidden="true">🎙</span><span id="voiceBtnText" data-i18n="variableVoiceButton">Inserisci con voce</span>
+                        </button>
+                        <div id="voiceStatus" class="voice-status" data-i18n="micVariable">Tocca per parlare</div>
+                    </div>
+                </div>
+                <button class="btn-secondary" id="addExpenseBtn" data-i18n="addExpense">Aggiungi spesa</button>
+                <button class="btn-danger" id="resetDayBtn" data-i18n="resetDay">Cancella spese del giorno</button>
+            </div>
+        </div>
+
+        <!-- GRAFICO (ANALISI) -->
+        <div class="section-card analysis-chart-card analysis-chart-card--donut" data-tab="analysis">
+            <h2 id="chartTitle" data-i18n="chart">Distribuzione spese</h2>
+            <div class="section-content chart-wrapper">
+                <div class="chart-container">
+                    <canvas id="expenseChart" width="400" height="300"></canvas>
+                </div>
+                <div class="analysis-chart-actions">
+                    <button id="chartLegendToggleBtn" class="btn-secondary analysis-inline-btn">Mostra categorie</button>
+                </div>
+                <div id="chartLegend" class="chart-legend" style="display:none;"></div>
+                <div id="categoryPrintPanel" class="category-print-panel" style="display:none;">
+                    <div class="category-print-panel__head">
+                        <div>
+                            <span class="category-print-panel__eyebrow">Categoria selezionata</span>
+                            <h3 id="categoryPrintTitle">—</h3>
+                        </div>
+                        <button id="closeCategoryPanelBtn" class="btn-secondary analysis-inline-btn">Chiudi</button>
+                    </div>
+                    <div class="category-print-panel__meta">
+                        <div class="category-print-kpi">
+                            <span>Totale</span>
+                            <strong id="categoryPrintTotal" class="sensitive-amount">—</strong>
+                        </div>
+                        <div class="category-print-kpi">
+                            <span>Movimenti</span>
+                            <strong id="categoryPrintCount">0</strong>
+                        </div>
+                    </div>
+                    <p id="categoryPrintHint" class="chart-note">Clicca Stampa PDF per esportare solo le voci della categoria selezionata.</p>
+                    <div class="category-print-panel__cta">
+                        <button id="printCategoryPdfBtn" class="btn-primary">Stampa PDF categoria</button>
+                    </div>
+                </div>
+                <p class="chart-note" id="chartNote" data-i18n="chartNote">Aggiungi spese per vedere il grafico</p>
+            </div>
+        </div>
+
+        <!-- GRAFICO ENTRATE VS USCITE (ANALISI) -->
+        <div class="section-card analysis-chart-card analysis-chart-card--bars" data-tab="analysis" id="balanceChartCard">
+            <h2>Entrate vs uscite</h2>
+            <div class="section-content chart-wrapper">
+                <div class="chart-container bar-chart-container">
+                    <canvas id="balanceChart" width="400" height="220"></canvas>
+                </div>
+                <p class="chart-note" id="balanceChartNote">Aggiungi entrate o spese per vedere il grafico</p>
+            </div>
+        </div>
+
+
+
+        <!-- GRAFICO TREND SALDO MENSILE (ANALISI) -->
+        <div class="section-card analysis-chart-card analysis-chart-card--trend" data-tab="analysis" id="monthlyBalanceChartCard">
+            <h2>Trend saldo mensile</h2>
+            <div class="section-content chart-wrapper">
+                <div class="chart-container bar-chart-container">
+                    <canvas id="monthlyBalanceChart" width="400" height="220"></canvas>
+                </div>
+                <p class="chart-note" id="monthlyBalanceChartNote">Andamento mensile di entrate e uscite</p>
+                <div id="monthlyBalanceEmpty" class="chart-note" style="display:none;">Nessun dato storico disponibile<br>Importa movimenti o inserisci spese</div>
+            </div>
+        </div>
+
+
+        <!-- ASSISTENTE (AI) -->
+        <div class="section-card" data-tab="ai">
+            <h2 id="assistantTitle" data-i18n="assistant">Assistente Finanziario AI</h2>
+            <div class="section-content">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            <span class="message-sender" id="assistantNameLabel"><span id="assistantNameText" data-i18n="assistantName">Assistente</span>:</span>
+                            <span class="message-text" id="welcomeMessage" data-i18n="welcomeMessage">Ciao! Sono il tuo assistente finanziario. Chiedimi qualsiasi cosa sul tuo budget!</span>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="" data-i18n-placeholder="chatPlaceholder" class="chat-input">
+                        <button id="sendChatBtn" class="chat-send-btn" data-i18n="send">Invia</button>
+                    </div>
+                </div>
+                <div class="chat-suggestions">
+                    <button class="suggestion-chip" id="suggestion1" data-question="Come posso risparmiare 100€ questo mese?" data-i18n="suggestion1">Risparmia 100€</button>
+                    <button class="suggestion-chip" id="suggestion2" data-question="Cosa succede se aumento le spese del 20%?" data-i18n="suggestion2">Simula aumento</button>
+                    <button class="suggestion-chip" id="suggestion3" data-question="Quando raggiungerò il mio obiettivo?" data-i18n="suggestion3">Obiettivo</button>
+                    <button class="suggestion-chip" id="suggestion4" data-question="Qual è la categoria dove spendo di più?" data-i18n="suggestion4">Top categoria</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- WIDGET AI (AI) -->
+        <div class="section-card" id="aiWidget" data-tab="ai" style="display: none;">
+            <div class="section-header">
+                <h2 id="aiWidgetTitle" data-i18n="aiSuggestionsTitle">Suggerimenti AI</h2>
+                <span class="badge" id="aiWidgetBadge" data-i18n="aiSmartBadge">intelligente</span>
+            </div>
+            <div class="section-content">
+                <div id="aiSuggestion" class="ai-suggestion">
+                    <span class="ai-icon" aria-hidden="true"></span>
+                    <span id="aiMessage"></span>
+                </div>
+                <div id="aiAction" class="ai-action" style="display: none;">
+                    <button id="applyAiSuggestion" class="btn-secondary"></button>
+                    <button id="dismissAiSuggestion" class="btn-text">Chiudi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RISPARMIO (ANALISI) -->
+        <div class="section-card analysis-savings-card" data-tab="analysis">
+            <h2 id="savingsTitle" data-i18n="savings">Obiettivo risparmio</h2>
+            <div class="section-content">
+                <div class="savings-widget savings-widget-clarified">
+                    <div class="widget-header savings-widget-hero">
+                        <div class="pig-icon-container">
+                            <span class="pig-emoji" aria-hidden="true"></span>
+                            <div class="progress-ring" id="progressRing">
+                                <svg width="60" height="60">
+                                    <circle cx="30" cy="30" r="25" stroke="#e0e0e0" stroke-width="4" fill="none"/>
+                                    <circle id="progressCircle" cx="30" cy="30" r="25" stroke="var(--accent)" stroke-width="4" fill="none"
+                                            stroke-dasharray="157" stroke-dashoffset="157" transform="rotate(-90 30 30)"/>
+                                </svg>
+                                <span class="progress-percentage" id="progressPercentage">0%</span>
+                            </div>
+                        </div>
+                        <div class="widget-info">
+                            <h3 id="savingsWidgetTitle" data-i18n="savingsWidgetTitle">Raggiungerai il tuo obiettivo</h3>
+                            <p class="target-date" id="targetDate" data-i18n="never">--</p>
+                        </div>
+                    </div>
+
+                    <div class="interactive-controls savings-plan-controls">
+                        <div class="slider-container savings-percent-field-card">
+                            <label for="savePercent" id="percentLabel" data-i18n="percentLabel">Percentuale su entrate (%)</label>
+                            <div class="input-with-icon savings-percent-input-wrap">
+                                <span class="input-icon input-icon-percent" aria-hidden="true">%</span>
+                                <input type="number" id="savePercent" min="0" max="30" value="10" step="1" inputmode="decimal" class="savings-percent-input" aria-describedby="savePercentHint">
+                            </div>
+                            <div class="savings-percent-hint" id="savePercentHint">
+                                <span data-i18n="percent0">Min 0%</span>
+                                <span data-i18n="percent30">Max 30%</span>
+                            </div>
+                        </div>
+
+                        <div class="goal-input-container">
+                            <label for="saveGoal" id="goalLabel" data-i18n="goalLabel">Obiettivo (€)</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon input-icon-goal" aria-hidden="true"></span>
+                                <input type="number" id="saveGoal" placeholder="1000" step="100" class="goal-input">
+                            </div>
+                        </div>
+
+                        <div class="initial-savings-container">
+                            <label for="savingsPotInput" id="savingsPotInputLabel" data-i18n="savingsPotInputLabel">Fondo iniziale (€)</label>
+                            <div class="input-with-icon">
+                                <span class="input-icon input-icon-savings" aria-hidden="true"></span>
+                                <input type="number" id="savingsPotInput" placeholder="1000" step="10" class="initial-input">
+                            </div>
+                        </div>
+                    </div>
+
+                  <div class="savings-insights savings-insights-grid">
+    <div class="insight-card current-plan savings-insight-card">
+        <h4 id="currentPlanTitle" data-i18n="currentPlan"></h4>
+        <p id="currentPlanMessage"></p>
+    </div>
+    
+    <div class="insight-card suggestion savings-insight-card" id="suggestionCard">
+        <h4 id="suggestionTitle" data-i18n="savingsSuggestionTitle"></h4>
+        <p id="suggestionMessage"></p>
+        <button id="applySuggestionBtn" type="button" class="savings-suggestion-btn" data-i18n="applySuggestion"></button>
+    </div>
+</div>
+
+<div class="savings-cta-row"><button class="btn-primary savings-apply-btn" id="applySaveBtn" data-i18n="applySavings"></button></div>
+                </div>
+            </div>
+        </div>
+
+                <!-- IMPORT CSV/EXCEL (TOOLS) -->
+        <div class="section-card tools-surface-card tools-import-card" data-tab="tools">
+            <h2 id="csvTitle" data-i18n="csvTitle">Importa movimenti bancari</h2>
+            <div class="section-content">
+                <p class="subtitle" id="csvSubtitle" style="margin-bottom: 15px;" data-i18n="csvSubtitle">
+                    Scarica l'estratto conto dalla tua banca in formato CSV o Excel
+                </p>
+                <div class="input-group">
+                    <label for="csvFile" id="csvChooseFileLabel" data-i18n="csvChooseFile">Scegli file CSV o Excel</label>
+                    <input type="file" id="csvFile" accept=".csv,.txt,.xls,.xlsx" style="display: none;">
+                    <div class="file-name" id="csvFileName" data-i18n="csvNoFile">Nessun file selezionato</div>
+                    <div class="import-actions">
+                        <button class="btn-secondary" id="importCsvBtn" data-i18n="csvImportBtn">Importa CSV / Excel</button>
+                        <button class="btn-link" id="importAdvancedToggle" type="button" data-i18n="advancedOptions">Opzioni avanzate</button>
+                    </div>
+                </div>
+                <div id="importAdvanced" class="import-advanced" style="display:none;">
+                <div class="input-group-row">
+                    <div class="input-group half">
+                        <label for="csvDelimiter" id="csvDateFormatLabel" data-i18n="csvDateFormat">Formato data</label>
+                        <select id="csvDelimiter">
+                            <option value="DD/MM/YYYY" data-i18n="ddmmyyyy">GG/MM/AAAA</option>
+                            <option value="MM/DD/YYYY" data-i18n="mmddyyyy">MM/DD/AAAA</option>
+                        </select>
+                    </div>
+                    <div class="input-group half">
+                        <label for="csvSeparator" id="csvSeparatorLabel" data-i18n="csvSeparator">Separatore</label>
+                        <select id="csvSeparator">
+                            <option value="," data-i18n="csvComma">Virgola (,)</option>
+                            <option value=";" data-i18n="csvSemicolon">Punto e virgola (;)</option>
+                            <option value="\t" data-i18n="csvTab">Tabulazione</option>
+                        </select>
+                    </div>
+                </div>
+                                <!-- NUOVI CONTROLLI PER GESTIRE RIGHE INIZIALI -->
+                <div class="input-group-row" style="margin-top: 10px;">
+                    <div class="input-group half">
+                        <label for="skipRows" id="skipRowsLabel" data-i18n="skipRowsLabel">Salta righe iniziali</label>
+                        <input type="number" id="skipRows" min="0" max="20" value="0" class="date-input">
+                    </div>
+                    <div class="input-group half">
+                        <label for="headerRowManual" id="headerRowManualLabel" data-i18n="headerRowManualLabel">Riga intestazione (0 = nessuna)</label>
+                        <input type="number" id="headerRowManual" min="0" max="20" value="1" class="date-input">
+                    </div>
+                </div>
+                <p class="help-text" id="skipHelp" data-i18n="skipHelp">Per file Fineco: salta le prime righe fino a trovare le colonne</p>
+                <!-- NUOVE OPZIONI PER EXCEL -->
+                <div class="input-group-row" style="margin-top: 15px;">
+                    <div class="input-group half">
+                        <label for="excelSheet" id="excelSheetLabel" data-i18n="excelSheet">Foglio Excel</label>
+                        <select id="excelSheet" class="language-select" disabled>
+                            <option value="" data-i18n="excelSheetPlaceholder">Carica un file Excel</option>
+                        </select>
+                    </div>
+                    <div class="input-group half">
+                        <label for="excelHeaderRow" id="excelHeaderLabel" data-i18n="excelHeaderRow">Riga intestazione</label>
+                        <select id="excelHeaderRow" class="language-select">
+                            <option value="0" data-i18n="row1">Riga 1</option>
+                            <option value="1" data-i18n="row2">Riga 2</option>
+                            <option value="2" data-i18n="row3">Riga 3</option>
+                            <option value="-1" selected data-i18n="rowNone">Nessuna (auto)</option>
+                        </select>
+                    </div>
+                </div>
+                <p class="help-text" id="excelHelp" data-i18n="excelHelp">I file Excel vengono convertiti automaticamente</p>
+                </div>
+                
+                <div id="csvPreview" class="csv-preview" style="display: none; margin-top: 20px;">
+                    <h3 id="csvPreviewTitle" data-i18n="csvPreview">Anteprima</h3>
+                    <div id="previewContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT WISESCORE (TOOLS) -->
+        <div class="section-card tools-surface-card tools-report-card" data-tab="tools" id="reportToolsCard">
+            <h2>Report WiseScore™</h2>
+            <div class="section-content">
+                <p class="chart-note">Apri il report riepilogativo del periodo con score, pillar, entrate, spese e stato budget.</p>
+                <div class="button-group">
+                    <button class="btn-secondary" id="openReportBtn">Apri report</button>
+                    <button class="btn-secondary" id="refreshReportBtn">Aggiorna report</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- CALENDAR EXPORT (TOOLS) -->
+        <div class="section-card tools-surface-card tools-calendar-card" data-tab="tools" id="calendarToolsCard">
+            <h2 id="calendarToolsTitle" data-i18n="calendarToolsTitle">Export Calendar</h2>
+            <div class="section-content">
+                <p class="chart-note" id="calendarToolsSubtitle" data-i18n="calendarToolsSubtitle">Mostra le scadenze del periodo nel tuo calendario senza lasciarle in Home.</p>
+                <div class="button-group">
+                    <button id="exportCalendarBtn" class="btn-secondary" data-i18n="export">Esporta in Google Calendar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPOSTAZIONI (TOOLS) -->
+        <div class="section-card tools-surface-card tools-settings-card" data-tab="tools">
+            <h2 id="settingsTitle" data-i18n="settings">Impostazioni</h2>
+            <div class="section-content">
+                <div class="beta-info-card">
+                    <div class="beta-info-head">
+                        <strong id="betaSettingsTitle" data-bootstrap-i18n="betaSettingsTitle">Beta build</strong>
+                        <span id="betaSettingsBadge" class="beta-build-badge beta-build-badge--soft">BETA v1</span>
+                    </div>
+                    <p id="betaSettingsText" class="beta-info-text" data-bootstrap-i18n="betaSettingsText">Build controllata per tester. Accesso protetto da codice beta locale.</p>
+                    <div class="button-group beta-info-actions">
+                        <a id="sendFeedbackBtn" class="btn-secondary" href="mailto:feedback@kedrix.ai?subject=Kedrix%20Beta%20Feedback">Send Feedback</a>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label for="thresholdInput" id="thresholdLabel" data-i18n="thresholdLabel">Soglia avviso (€)</label>
+                    <input type="number" id="thresholdInput" value="50" step="5">
+                </div>
+                <div class="setting-item">
+                    <label for="languageSelect" id="languageLabel" data-i18n="languageLabel">Lingua / Language</label>
+                    <select id="languageSelect" class="language-select">
+                        <option value="it">Italiano</option>
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                    </select>
+                </div>
+                                <!-- NUOVO TOGGLE PER VISUALIZZAZIONE MESI/GIORNI -->
+                <div class="setting-item">
+                    <label id="fixedDateFormatLabel" data-i18n="fixedDateFormatLabel">Formato scadenze spese fisse</label>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="fixedDateFormat" id="dateFormatDays" value="days" checked>
+                            <span data-i18n="fixedDateFormatDays">Giorni rimanenti</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                            <input type="radio" name="fixedDateFormat" id="dateFormatMonths" value="months">
+                            <span data-i18n="fixedDateFormatMonths">Mesi e giorni</span>
+                        </label>
+                    </div>
+                    <small class="help-text" id="fixedDateFormatHelp" data-i18n="fixedDateFormatHelp">Scegli come visualizzare le scadenze delle spese fisse</small>
+                </div>
+                <div class="setting-item">
+                    <label id="backupLabel" data-i18n="backupLabel">Backup dati</label>
+                    <div class="button-group">
+                        <button class="btn-secondary" id="backupBtn" data-i18n="backupButton">Scarica backup</button>
+                        <input type="file" id="restoreFile" accept=".json" style="display: none;">
+                        <button class="btn-secondary" id="restoreBtn" data-i18n="restoreButton">Ripristina</button>
+                    </div>
+                </div>
+                <button class="btn-danger" id="resetAllBtn" data-i18n="resetAll">Reset completo</button>
+                <button class="btn-secondary" id="loadDemoBtn" data-i18n="onboardingDemo"></button>
+            </div>
+        </div>
+
+        <!-- GESTIONE CATEGORIE (TOOLS) -->
+        <div class="section-card" data-tab="tools">
+            <h2 id="categoriesSectionTitle" data-i18n="categoriesSectionTitle">Gestione categorie</h2>
+            <div class="section-content">
+                <button id="manageCategoriesBtn" class="btn-secondary">
+                    <span id="manageCustomCategoriesText" data-i18n="manageCustomCategories">Gestisci categorie personalizzate</span>
+                </button>
+            </div>
+        </div>
+<!-- PERSONALIZZAZIONE COLORI (TOOLS) -->
+<div class="section-card" data-tab="tools">
+    <h2 id="colorsTitle" data-i18n="colorsTitle">Personalizza colori</h2>
+    <div class="section-content">
+        <p id="colorsSubtitle" style="margin-bottom: 15px; color: var(--text-secondary);" data-i18n="colorsSubtitle">Scegli i tuoi colori preferiti per l'app. Le modifiche sono immediate.</p>
+        
+        <div class="color-grid">
+            <div class="color-item">
+                <label id="colorAccentLabel" data-i18n="colorAccentLabel">Colore principale (accento)</label>
+                <input type="color" id="colorAccent" value="#0ea5e9">
+            </div>
+            <div class="color-item">
+                <label id="colorAccentLightLabel" data-i18n="colorAccentLightLabel">Colore secondario (accent-light)</label>
+                <input type="color" id="colorAccentLight" value="#38bdf8">
+            </div>
+            <div class="color-item">
+                <label id="colorCardBgLabel" data-i18n="colorCardBgLabel">Sfondo card</label>
+                <input type="color" id="colorCardBg" value="#ffffff">
+            </div>
+            <div class="color-item">
+                <label id="colorTextPrimaryLabel" data-i18n="colorTextPrimaryLabel">Testo primario</label>
+                <input type="color" id="colorTextPrimary" value="#0f172a">
+            </div>
+            <div class="color-item">
+                <label id="colorTextSecondaryLabel" data-i18n="colorTextSecondaryLabel">Testo secondario</label>
+                <input type="color" id="colorTextSecondary" value="#334155">
+            </div>
+            <div class="color-item">
+                <label id="colorBgLabel" data-i18n="colorBgLabel">Sfondo generale</label>
+                <input type="color" id="colorBg" value="#f8fafc">
+            </div>
+            <div class="color-item">
+                <label id="colorSuccessLabel" data-i18n="colorSuccessLabel">Successo (entrate)</label>
+                <input type="color" id="colorSuccess" value="#10b981">
+            </div>
+            <div class="color-item">
+                <label id="colorDangerLabel" data-i18n="colorDangerLabel">Pericolo (spese)</label>
+                <input type="color" id="colorDanger" value="#ef4444">
+            </div>
+            <div class="color-item">
+                <label id="colorWarningLabel" data-i18n="colorWarningLabel">Avviso</label>
+                <input type="color" id="colorWarning" value="#f59e0b">
+            </div>
+            <div class="color-item">
+                <label id="colorBorderLabel" data-i18n="colorBorderLabel">Bordi</label>
+                <input type="color" id="colorBorder" value="#e2e8f0">
+            </div>
+        </div>
+        
+        <div class="button-group" style="margin-top: 20px;">
+            <button id="resetColorsBtn" class="btn-secondary" data-i18n="resetColors">Ripristina colori predefiniti</button>
+        </div>
+    </div>
+</div>
+        <!-- MODALE GESTIONE CATEGORIE -->
+        <div id="categoryManagerOverlay" class="modal-overlay" style="display: none;">
+            <div class="modal-content bw-category-manager-modal" style="max-width: 500px;">
+                <h3 id="manageCategoriesTitle" data-i18n="manageCategories">Gestisci categorie</h3>
+                <h4 id="defaultCategoriesTitle" data-i18n="defaultCategoriesTitle">Categorie predefinite</h4>
+                <div id="defaultCategoriesList" class="categories-list"></div>
+                <h4 id="customCategoriesTitle" data-i18n="yourCategoriesTitle">Le tue categorie</h4>
+                <div id="customCategoriesList" class="categories-list"></div>
+                <div class="input-group" style="margin-top: 20px;">
+                    <label for="newCategoryName" id="newCategoryLabel" data-i18n="newCategoryLabel">Nuova categoria</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <input type="text" id="newCategoryName" placeholder="" data-i18n-placeholder="newCategoryPlaceholder">
+                        <button id="saveCategoryBtn" class="btn-primary" style="width: auto;">
+                            <span id="addCategoryBtnText" data-i18n="add">Aggiungi</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top: 14px;">
+                    <label for="newSubcategoryName" data-i18n="expenseSubCategory">Sottocategoria (facoltativa)</label>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <select id="newSubcategoryParent"></select>
+                        <input type="text" id="newSubcategoryName" placeholder="" data-i18n-placeholder="expenseSubCategory">
+                        <button id="saveSubCategoryBtn" class="btn-secondary" style="width: auto;">+</button>
+                    </div>
+                </div>
+                <div class="button-group" style="margin-top: 20px;">
+                    <button id="closeCategoryManager" class="btn-secondary">
+                        <span id="closeCategoryManagerText" data-i18n="close">Chiudi</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORT MODAL -->
+        <div id="reportModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content report-modal-content">
+                <div class="report-modal-header">
+                    <div>
+                        <h3>Report WiseScore™</h3>
+                        <p class="report-modal-subtitle" id="reportGeneratedAt">Riepilogo periodo corrente</p>
+                    </div>
+                    <div class="button-group report-modal-actions">
+                        <button id="refreshReportModalBtn" class="btn-secondary">Aggiorna</button>
+                        <button id="exportReportPdfBtn" class="btn-primary">Esporta PDF</button>
+                        <button id="closeReportBtn" class="btn-secondary">Chiudi</button>
+                    </div>
+                </div>
+                <div id="reportViewContent" class="report-view-content"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer footer-period-card">
+            <div class="footer-period-header">
+                <p id="footerText" class="footer-title" data-i18n="footerText">Stato periodo</p>
+            </div>
+            <div class="footer-period-grid">
+                <div class="footer-period-item">
+                    <span id="footerPeriodLabel" class="footer-period-label" data-i18n="footerPeriodLabel">Periodo stipendio</span>
+                    <strong id="footerPeriodRange" class="footer-period-value">—</strong>
+                </div>
+                <div class="footer-period-item">
+                    <span id="footerDaysLabel" class="footer-period-label" data-i18n="footerDaysLabel">Giorni rimanenti</span>
+                    <strong id="footerPeriodDays" class="footer-period-value">—</strong>
+                </div>
+                <div class="footer-period-item footer-period-item--accent">
+                    <span id="footerBudgetLabel" class="footer-period-label" data-i18n="footerBudgetLabel">Budget medio</span>
+                    <strong id="footerPeriodBudget" class="footer-period-value sensitive-amount">—</strong>
+                </div>
+            </div>
+            <p id="footerFeatures" class="footer-period-note" data-i18n="footerFeatures">Periodo operativo sempre basato su stipendio → stipendio</p>
+            <p id="footerBrandSignature" class="footer-brand-signature" data-i18n="footerBrandSignature">Kedrix</p>
+            <p id="footerBuildLabel" class="footer-build-label">Kedrix — BETA v1 · BetaCandidate</p>
+            <div class="footer-feedback-row">
+                <a id="footerFeedbackLink" class="btn-secondary footer-feedback-btn" href="mailto:feedback@kedrix.ai?subject=Kedrix%20Beta%20Feedback">Send Feedback</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="betaAccessModal" class="modal-overlay beta-access-overlay" style="display: none;">
+        <div class="modal-content beta-access-card">
+            <div class="beta-access-kicker" id="betaAccessKicker" data-bootstrap-i18n="betaAccessKicker">Kedrix — Beta Access</div>
+            <h3 id="betaAccessTitle" data-bootstrap-i18n="betaAccessTitle">Inserisci il codice beta</h3>
+            <p id="betaAccessText" class="beta-access-text" data-bootstrap-i18n="betaAccessText">Questa build è riservata ai tester autorizzati. Inserisci l’email approvata per continuare.</p>
+            <div class="input-group" style="margin-top: 16px;">
+                <label for="betaAccessCode" id="betaAccessLabel" data-bootstrap-i18n="betaAccessLabel">Email autorizzata</label>
+                <input type="text" id="betaAccessCode" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" placeholder="nome@email.com">
+            </div>
+            <div id="betaAccessError" class="beta-access-error" aria-live="polite"></div>
+            <div class="button-group beta-access-actions">
+                <button id="betaAccessSubmit" class="btn-primary" data-bootstrap-i18n="betaAccessSubmit">Verifica accesso</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Worker / runtime registration -->
+    <script>
+      window.addEventListener("load", async () => {
+        if (!("serviceWorker" in navigator)) return;
+        try {
+          const runtimeConfig = window.KedrixRuntimeConfig;
+          const swUrl = runtimeConfig && typeof runtimeConfig.getServiceWorkerUrl === 'function'
+            ? runtimeConfig.getServiceWorkerUrl()
+            : './sw.js';
+          const scope = runtimeConfig && typeof runtimeConfig.getScope === 'function'
+            ? runtimeConfig.getScope()
+            : './';
+
+          const reg = await navigator.serviceWorker.register(swUrl, { scope });
+          await reg.update().catch(() => {});
+
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+          }
+
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+              }
+            });
+          });
+
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            refreshing = true;
+            window.location.reload();
+          });
+        } catch (err) {
+          console.warn('[Kedrix] Service worker registration failed', err);
+        }
+      });
+    </script>
+    <script src="session-manager.js?v=20260322_ghclean1"></script>
+    <script src="license-guard.js?v=20260321h1"></script>
+    <script src="api-client.js?v=20260321h1"></script>
+    <script src="tracking-hooks.js?v=20260322h2"></script>
+    <script src="license-system.js?v=20260321h1"></script>
+    <script src="app.js?v=20260322_ghclean1"></script>
+    <script src="tracking.js?v=20260322_refactor_i18n_v1"></script>
+    <script src="guided-activation.js?v=20260322_ghclean1"></script>
+    
+    <!-- PREMIUM UPGRADE MODAL -->
+    <div id="premiumModal" class="modal-overlay premium-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 10002; align-items: center; justify-content: center;">
+        <div class="modal-content premium-modal-shell" style="background: var(--card-bg); padding: 40px; border-radius: 24px; max-width: 500px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <div class="premium-modal-header">
+                <div>
+                    <div class="premium-modal-kicker">Kedrix Premium</div>
+                    <h2 class="premium-modal-title" data-i18n="upgradeBanner">Upgrade a Premium</h2>
+                    <p class="premium-modal-subtitle">Più funzioni, meno limiti, stessa esperienza Kedrix.</p>
+                </div>
+            </div>
+            
+            <div class="premium-modal-body">
+                <div class="plan-comparison premium-plan-comparison">
+                    <div class="plan free premium-plan-card premium-plan-card--free">
+                        <div class="premium-plan-head">
+                            <h3 data-i18n="free">Free</h3>
+                            <span class="premium-plan-chip">Attuale</span>
+                        </div>
+                        <ul>
+                            <li class="feature-enabled"><span data-i18n="transactionsLimit">50 transazioni/mese</span></li>
+                            <li class="feature-enabled"><span data-i18n="categoriesLimit">3 categorie base</span></li>
+                            <li class="feature-disabled"><span data-i18n="csvImport">Importazione CSV</span></li>
+                            <li class="feature-disabled"><span data-i18n="aiAssistant">Assistente AI</span></li>
+                            <li class="feature-disabled"><span data-i18n="cloudSync">Sincronizzazione cloud</span></li>
+                        </ul>
+                    </div>
+                    <div class="plan premium premium-plan-card premium-plan-card--premium">
+                        <div class="premium-plan-head premium-plan-head--premium">
+                            <h3 data-i18n="premium">Premium</h3>
+                            <span class="premium-plan-chip premium-plan-chip--accent">Consigliato</span>
+                        </div>
+                        <ul>
+                            <li class="feature-enabled"><span data-i18n="unlimitedTransactions">Transazioni illimitate</span></li>
+                            <li class="feature-enabled"><span data-i18n="customCategories">Categorie personalizzate</span></li>
+                            <li class="feature-enabled"><span data-i18n="excelImport">Importazione CSV/Excel</span></li>
+                            <li class="feature-enabled"><span data-i18n="advancedAI">Assistente AI avanzato</span></li>
+                            <li class="feature-enabled"><span data-i18n="cloudSync">Sincronizzazione cloud</span></li>
+                            <li class="feature-enabled"><span data-i18n="detailedReports">Report dettagliati</span></li>
+                            <li class="feature-enabled"><span data-i18n="voiceRecognition">Riconoscimento vocale</span></li>
+                        </ul>
+                        <div class="price premium-price-box">
+                            <span class="amount" data-i18n="price">€4.99</span>
+                            <span class="period" data-i18n="perMonth">/mese</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="trial-section premium-trial-box" style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, var(--accent-light), var(--accent)); border-radius: 16px; text-align: center;">
+                <div class="premium-trial-icon" aria-hidden="true"></div>
+                <div>
+                    <h4 style="color: white; margin-bottom: 10px;" data-i18n="freeTrial">Prova Gratuita</h4>
+                    <p style="color: white; margin: 0;" data-i18n="freeTrialText">7 giorni di Premium, zero rischi!</p>
+                </div>
+            </div>
+            
+            <div class="button-group premium-modal-actions" style="display: flex; gap: 12px; flex-direction: column;">
+                <button id="startTrialBtn" class="btn-primary premium-modal-primary" style="padding: 14px 24px; font-size: 1.1rem;" data-i18n="startTrial">Inizia Prova Gratuita</button>
+                <button id="activateLicenseBtn" class="btn-secondary premium-modal-secondary" style="padding: 12px 24px;" data-i18n="activateLicense">Attiva Licenza</button>
+                <button id="closePremiumBtn" class="btn-text premium-modal-later" style="padding: 12px;" data-i18n="maybeLater">Forse dopo</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- LICENSE ACTIVATION MODAL -->
+    <div id="licenseModal" class="modal-overlay modal-overlay-upgraded" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 10003; align-items: center; justify-content: center;">
+        <div class="modal-content license-modal-card" style="background: var(--card-bg); padding: 30px; border-radius: 24px; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 style="margin-bottom: 20px; color: var(--accent);" data-i18n="activateLicense">Attiva Licenza Premium</h3>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);" data-i18n="email">Email</label>
+                <input type="email" id="licenseEmail" placeholder="" data-i18n-placeholder="emailPlaceholder" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-color); color: var(--text-primary);">
+            </div>
+            
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--text-secondary);" data-i18n="licenseKey">Chiave Licenza</label>
+                <input type="text" id="licenseKey" placeholder="" data-i18n-placeholder="licensePlaceholder" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-color); color: var(--text-primary);">
+            </div>
+            
+            <div class="button-group" style="display: flex; gap: 10px;">
+                <button id="confirmLicenseBtn" class="btn-primary" style="padding: 12px 24px;" data-i18n="activate">Attiva</button>
+                <button id="cancelLicenseBtn" class="btn-secondary" style="padding: 12px 24px;" data-i18n="cancel">✕ Annulla</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- REVISIONE IMPORT CSV -->
+    <div id="importReviewOverlay" class="modal-overlay modal-overlay-upgraded" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 10000; display: none; align-items: center; justify-content: center;">
+        <div class="modal-content import-review-card" style="background: var(--card-bg); padding: 30px; border-radius: 24px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 id="importReviewTitle" style="margin-bottom: 20px; color: var(--text-primary);" data-i18n="importReview">Revisione spese importate</h3>
+            <div id="importReviewList" style="margin-bottom: 20px;"></div>
+            <div class="button-group" style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button id="confirmImportBtn" class="btn-primary" style="padding: 12px 24px;" data-i18n="importConfirm">Conferma</button>
+                <button id="cancelImportBtn" class="btn-secondary" style="padding: 12px 24px;" data-i18n="importCancel">✕ Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAPPATURA IMPORT CSV -->
+    <div id="duplicateImportOverlay" class="modal-overlay modal-overlay-upgraded duplicate-import-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 10004; align-items: center; justify-content: center;">
+        <div class="modal-content duplicate-import-modal" style="background: var(--card-bg); padding: 24px; border-radius: 24px; max-width: 420px; width: min(92vw, 420px); box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <div class="duplicate-import-modal__header">
+                <div class="duplicate-import-modal__kicker">Kedrix</div>
+                <h3 id="duplicateImportTitle" class="duplicate-import-modal__title">Possibile duplicato</h3>
+                <p id="duplicateImportSubtitle" class="duplicate-import-modal__subtitle">Esiste già un movimento simile. Decidi se mantenere entrambe le voci.</p>
+            </div>
+            <div class="duplicate-import-modal__body">
+                <div id="duplicateImportExisting" class="duplicate-import-card"></div>
+                <div id="duplicateImportIncoming" class="duplicate-import-card"></div>
+            </div>
+            <div class="button-group duplicate-import-modal__actions">
+                <button id="duplicateImportKeepBtn" class="btn-primary">Importa comunque</button>
+                <button id="duplicateImportSkipBtn" class="btn-secondary">Salta duplicato</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="csvMappingOverlay" class="modal-overlay modal-overlay-upgraded" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 10001; align-items: center; justify-content: center;">
+        <div class="modal-content csv-mapping-card" style="background: var(--card-bg); padding: 30px; border-radius: 24px; max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+            <h3 id="csvMappingTitle" style="margin-bottom: 20px; color: var(--accent);" data-i18n="csvMappingTitle">Mappa le colonne del file CSV</h3>
+            <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-color); border-radius: 16px; border-left: 4px solid var(--accent);">
+                <p id="csvMappingInstructions" style="margin: 0; color: var(--text-secondary); font-size: 0.95rem;" data-i18n="csvMappingInstructionsHtml">
+                    <strong>Istruzioni:</strong> Associa ogni colonna del tuo file al campo corrispondente.
+                    Le righe con importo positivo saranno considerate <strong>entrate</strong>, quelle negative <strong>spese</strong>.
+                </p>
+            </div>
+            <div style="overflow-x: auto; margin-bottom: 25px; border: 1px solid var(--border); border-radius: 16px;">
+                <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                    <thead>
+                        <tr id="csvMappingHeaders" style="background: var(--accent); color: white;"></tr>
+                    </thead>
+                    <tbody id="csvMappingPreview"></tbody>
+                </table>
+            </div>
+            <div style="margin-bottom: 25px;">
+                <h4 id="csvMappingFieldsTitle" style="margin-bottom: 15px; color: var(--text-primary);" data-i18n="csvMappingFieldsTitle">Associazione campi:</h4>
+                <div id="csvMappingFields" style="display: flex; flex-direction: column; gap: 12px;"></div>
+            </div>
+            <div class="button-group" style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px;">
+                <button id="confirmMappingBtn" class="btn-primary" style="padding: 14px 32px;" data-i18n="importConfirm">Conferma e importa</button>
+                <button id="cancelMappingBtn" class="btn-secondary" style="padding: 14px 32px;" data-i18n="importCancel">✕ Annulla</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
