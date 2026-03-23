@@ -6,16 +6,16 @@
 
 <!-- TITLE MULTI LANG -->
 <text x="120" y="900" fill="#FFFFFF" font-size="70" font-family="Inter">
-Categories Report
+WiseScore Report
 </text>
 <text x="120" y="980" fill="#A0B3D6" font-size="36" font-family="Inter">
-Categorie Spese
+Report Finanziario AI
 </text>
 <text x="120" y="1040" fill="#A0B3D6" font-size="36" font-family="Inter">
-Categorías de Gastos
+Informe Financiero IA
 </text>
 <text x="120" y="1100" fill="#A0B3D6" font-size="36" font-family="Inter">
-Catégories de Dépenses
+Rapport Financier IA
 </text>
 
 <!-- FOOTER -->
