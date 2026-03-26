@@ -6,8 +6,8 @@
     serviceWorkerPath: './sw.js',
     scope: './',
     endpoints: {
-      registry: 'https://script.google.com/macros/s/AKfycbxNM0y7ohRqW3r5c4rUP3chtvf-e-0fe3KHuZ04nLmmQzCxz4WaYy1OmATcHw08CWqG/exec',
-      tracking: 'https://script.google.com/macros/s/AKfycbxNM0y7ohRqW3r5c4rUP3chtvf-e-0fe3KHuZ04nLmmQzCxz4WaYy1OmATcHw08CWqG/exec'
+      registry: 'https://script.google.com/macros/s/AKfycbxFvwj64WGRqm_cFAzHoVOZQije1yvoQ5-bZdCmhjZzMtqopwmEvInBOCgeJreM-Dpm/exec',
+      tracking: 'https://script.google.com/macros/s/AKfycbxFvwj64WGRqm_cFAzHoVOZQije1yvoQ5-bZdCmhjZzMtqopwmEvInBOCgeJreM-Dpm/exec'
     }
   };
 
@@ -67,7 +67,6 @@
       return CONFIG.endpoints[normalizedKind] || '';
     }
   };
-
 
   try {
     const registryMeta = api.getEndpoint('registry');
