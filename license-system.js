@@ -31,8 +31,6 @@ class KedrixLicense {
             accessAllowed: false
         };
 
-        this.hydrateStateFromUrl();
-
         this.limits = {
             denied: {
                 maxTransactions: 0,
@@ -72,91 +70,75 @@ class KedrixLicense {
         return '';
     }
 
-    hydrateStateFromUrl() {
+
+
+    seedFromUrl() {
         try {
             const params = new URLSearchParams(window.location.search || '');
-            if (!params.toString()) return;
+            if (!params || !params.toString()) return false;
 
-            const seededEmail = String(
+            const email = String(
                 params.get('email') ||
                 params.get('license_email') ||
                 params.get('user_email') ||
                 ''
             ).trim().toLowerCase();
 
-            const seededTesterId = String(
+            const testerId = String(
                 params.get('tester_id') ||
                 params.get('testerId') ||
                 params.get('license_key') ||
                 params.get('licenseKey') ||
+                params.get('beta_id') ||
                 params.get('id') ||
                 ''
             ).trim();
 
-            const seededStatus = String(
-                params.get('license_status') ||
-                params.get('status') ||
-                ''
-            ).trim();
-
-            const seededExpiresAt = String(
+            const expiresAt = String(
                 params.get('expires_at') ||
                 params.get('expiry') ||
                 params.get('expiration') ||
                 ''
             ).trim();
 
-            const seededType = String(
-                params.get('license_type') ||
-                params.get('type') ||
-                ''
-            ).trim();
+            const status = String(
+                params.get('license_status') ||
+                params.get('status') ||
+                'active'
+            ).trim() || 'active';
 
-            const seededBatch = String(params.get('batch') || '').trim();
-            const seededMessage = String(params.get('message') || '').trim();
-            const hasBootstrapPayload = !!(seededEmail || seededTesterId || seededStatus || seededExpiresAt || seededType || seededBatch || seededMessage);
-            if (!hasBootstrapPayload) return;
+            if (!email && !testerId) return false;
 
             this.updateState({
-                email: seededEmail || this.state.email,
-                testerId: seededTesterId || this.state.testerId,
-                status: seededStatus || this.state.status || 'pending',
-                type: seededType || this.state.type || 'beta',
-                batch: seededBatch || this.state.batch,
-                expiresAt: seededExpiresAt || this.state.expiresAt,
-                message: seededMessage || this.state.message || '',
-                checkedAt: new Date().toISOString()
+                email: email || this.state.email || '',
+                testerId: testerId || this.state.testerId || '',
+                status: status || this.state.status || 'active',
+                type: this.state.type || 'beta',
+                expiresAt: expiresAt || this.state.expiresAt || '',
+                checkedAt: '',
+                message: ''
             });
 
-            this.consumeBootstrapParamsFromUrl(params, [
-                'email', 'license_email', 'user_email',
-                'tester_id', 'testerId', 'license_key', 'licenseKey', 'id',
-                'license_status', 'status', 'expires_at', 'expiry', 'expiration',
-                'license_type', 'type', 'batch', 'message'
-            ]);
-        } catch (_error) {}
-    }
+            try {
+                const cleanUrl = new URL(window.location.href);
+                [
+                    'email','license_email','user_email','tester_id','testerId','license_key','licenseKey','beta_id','id',
+                    'expires_at','expiry','expiration','license_status','status'
+                ].forEach((key) => cleanUrl.searchParams.delete(key));
+                window.history.replaceState({}, document.title, cleanUrl.toString());
+            } catch (_) {}
 
-    consumeBootstrapParamsFromUrl(params, keysToRemove) {
-        try {
-            const next = new URLSearchParams(params.toString());
-            let changed = false;
-            keysToRemove.forEach((key) => {
-                if (next.has(key)) {
-                    next.delete(key);
-                    changed = true;
-                }
-            });
-            if (!changed) return;
-            const query = next.toString();
-            const cleanUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash || ''}`;
-            window.history.replaceState({}, document.title, cleanUrl);
-        } catch (_error) {}
+            return true;
+        } catch (error) {
+            console.warn('⚠️ URL bootstrap non riuscito:', error);
+            return false;
+        }
     }
 
     async bootstrap() {
         this.injectGateStyles();
         this.renderGate();
+        this.seedFromUrl();
 
         if (!this.state.email) {
             this.showGate('missing');
