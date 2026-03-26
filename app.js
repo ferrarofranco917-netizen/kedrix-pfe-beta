@@ -13315,6 +13315,7 @@ function setupImportHandlers() {
             const classMap = {
                 active: 'premium',
                 pending: 'free',
+                soft_allow: 'premium',
                 expired: 'free',
                 revoked: 'free',
                 suspended: 'free',
@@ -13448,9 +13449,8 @@ function setupImportHandlers() {
             }
             
             const banner = document.getElementById('premiumBanner');
-            if (banner && !window.app.license.hasFullPremiumAccess()) {
-                banner.style.display = 'block';
-            }
+            if (!banner) return;
+            banner.style.display = (window.app.license.hasFullPremiumAccess && window.app.license.hasFullPremiumAccess()) ? 'none' : 'block';
         };
 
         window.app.checkFeatureLimit = (feature, currentCount = 0) => {
@@ -13546,6 +13546,29 @@ function setupImportHandlers() {
             window.app.updateLicenseStatus();
             window.app.setupPremiumEventListeners();
             window.app.showPremiumBannerIfNeeded();
+
+            if (!window.app._licenseUiBound) {
+                window.addEventListener('kedrix:license-updated', () => {
+                    try {
+                        window.app.updateLicenseStatus();
+                        window.app.showPremiumBannerIfNeeded();
+                    } catch (_err) {}
+                });
+                window.app._licenseUiBound = true;
+            }
+
+            if (window.app.license && typeof window.app.license.whenReady === 'function') {
+                window.app.license.whenReady().then(() => {
+                    try {
+                        window.app.updateLicenseStatus();
+                        if (window.app.license.hasFullPremiumAccess && window.app.license.hasFullPremiumAccess()) {
+                            window.app.enablePremiumFeatures();
+                        }
+                        window.app.showPremiumBannerIfNeeded();
+                    } catch (_err) {}
+                });
+            }
+
             window.app.premiumSetupDone = true;
         };
 
