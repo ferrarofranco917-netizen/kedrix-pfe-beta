@@ -29,7 +29,7 @@ class KedrixLicense {
             expiresAt: localStorage.getItem(this.storage.expiresAt) || '',
             checkedAt: localStorage.getItem(this.storage.checkedAt) || '',
             message: localStorage.getItem(this.storage.message) || '',
-            accessAllowed: false
+            accessAllowed: localStorage.getItem(this.storage.accessAllowed) === 'true'
         };
 
         this.limits = {
@@ -397,7 +397,11 @@ class KedrixLicense {
         localStorage.setItem(this.storage.expiresAt, this.state.expiresAt || '');
         localStorage.setItem(this.storage.checkedAt, this.state.checkedAt || '');
         localStorage.setItem(this.storage.message, this.state.message || '');
+        localStorage.setItem(this.storage.accessAllowed, this.state.accessAllowed === true ? 'true' : 'false');
         if (this.state.email) localStorage.setItem('bw-license-email', this.state.email);
+        try {
+            window.dispatchEvent(new CustomEvent('kedrix-license-state-changed', { detail: { ...this.state } }));
+        } catch (_err) {}
     }
 
     syncLegacyPremiumFlags(isAllowed) {
