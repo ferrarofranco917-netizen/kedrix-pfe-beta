@@ -15,7 +15,8 @@ class KedrixLicense {
             batch: 'kedrix_license_batch',
             expiresAt: 'kedrix_license_expires_at',
             checkedAt: 'kedrix_license_checked_at',
-            message: 'kedrix_license_message'
+            message: 'kedrix_license_message',
+            accessAllowed: 'kedrix_access_allowed',
         };
 
         this.state = {
