@@ -56,6 +56,7 @@ class KedrixLicense {
             }
         };
 
+        this._urlSeeded = false;
         this.bootstrapPromise = this.bootstrap();
         this.startHeartbeat();
     }
@@ -69,8 +70,6 @@ class KedrixLicense {
         if (meta && meta.content) return meta.content.trim();
         return '';
     }
-
-
 
     seedFromUrl() {
         try {
@@ -119,15 +118,7 @@ class KedrixLicense {
                 message: ''
             });
 
-            try {
-                const cleanUrl = new URL(window.location.href);
-                [
-                    'email','license_email','user_email','tester_id','testerId','license_key','licenseKey','beta_id','id',
-                    'expires_at','expiry','expiration','license_status','status'
-                ].forEach((key) => cleanUrl.searchParams.delete(key));
-                window.history.replaceState({}, document.title, cleanUrl.toString());
-            } catch (_) {}
-
+            this._urlSeeded = true;
             return true;
         } catch (error) {
             console.warn('⚠️ URL bootstrap non riuscito:', error);
@@ -135,14 +126,32 @@ class KedrixLicense {
         }
     }
 
+    cleanupUrlParams() {
+        try {
+            const cleanUrl = new URL(window.location.href);
+            [
+                'email', 'license_email', 'user_email',
+                'tester_id', 'testerId', 'license_key', 'licenseKey', 'beta_id', 'id',
+                'expires_at', 'expiry', 'expiration',
+                'license_status', 'status'
+            ].forEach((key) => cleanUrl.searchParams.delete(key));
+            window.history.replaceState({}, document.title, cleanUrl.toString());
+        } catch (_err) {}
+    }
+
     async bootstrap() {
         this.injectGateStyles();
-        this.renderGate();
-        this.seedFromUrl();
 
-        if (!this.state.email) {
+        const seeded = this.seedFromUrl();
+        this.renderGate();
+
+        if (!this.state.email && !this.state.testerId) {
             this.showGate('missing');
             return this.state;
+        }
+
+        if (seeded) {
+            this.setGateLoading(true, 'Attivazione accesso beta in corso…');
         }
 
         await this.verifyRemote({
@@ -150,6 +159,7 @@ class KedrixLicense {
             testerId: this.state.testerId,
             silent: true
         });
+
         return this.state;
     }
 
@@ -175,17 +185,17 @@ class KedrixLicense {
 
         try {
             const payload = {
-                    action: 'check_license',
-                    email: normalizedEmail,
-                    testerId: normalizedTesterId,
-                    tester_id: normalizedTesterId,
-                    licenseKey: normalizedTesterId,
-                    license_key: normalizedTesterId,
-                    source: 'kedrix-app',
-                    client_sig: (window.KedrixLicenseGuard && window.KedrixLicenseGuard.sign)
-                        ? window.KedrixLicenseGuard.sign({ email: normalizedEmail, testerId: normalizedTesterId })
-                        : ''
-                };
+                action: 'check_license',
+                email: normalizedEmail,
+                testerId: normalizedTesterId,
+                tester_id: normalizedTesterId,
+                licenseKey: normalizedTesterId,
+                license_key: normalizedTesterId,
+                source: 'kedrix-app',
+                client_sig: (window.KedrixLicenseGuard && window.KedrixLicenseGuard.sign)
+                    ? window.KedrixLicenseGuard.sign({ email: normalizedEmail, testerId: normalizedTesterId })
+                    : ''
+            };
 
             const apiResult = (window.KedrixAPI && window.KedrixAPI.request)
                 ? await window.KedrixAPI.request(this.endpoint, payload, { meta: { route: 'check_license' } })
@@ -224,6 +234,11 @@ class KedrixLicense {
                 }
                 this.hideGate();
                 this.syncLegacyPremiumFlags(true);
+
+                if (this._urlSeeded) {
+                    this.cleanupUrlParams();
+                    this._urlSeeded = false;
+                }
             } else {
                 this.syncLegacyPremiumFlags(false);
                 this.showGate(status);
@@ -478,7 +493,7 @@ class KedrixLicense {
         gate.classList.add('is-visible');
         document.body.classList.add('kedrix-beta-locked');
         const message = this.state.message || this.messageForStatus(status);
-        const tone = status === 'error' ? 'error' : (status === 'pending' ? 'neutral' : 'neutral');
+        const tone = status === 'error' ? 'error' : 'neutral';
         this.writeGateMessage(message, tone);
     }
 
@@ -513,7 +528,6 @@ class KedrixLicense {
             });
         }, 1000 * 60 * 3);
     }
-
 }
 
 if (typeof module !== 'undefined' && module.exports) {
