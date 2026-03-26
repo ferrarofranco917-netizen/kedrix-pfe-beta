@@ -4383,13 +4383,35 @@ if (excelHeaderSelectEl) {
 
     openAnalysisReportFromShortcut() {
         if (typeof this.showTab === 'function') this.showTab('analysis');
-        setTimeout(() => {
-            if (typeof this.openReportModal === 'function') {
-                this.openReportModal();
+        setTimeout(async () => {
+    if (window.app && typeof window.app.setupPremiumSystem === "function") {
+
+        window.app.setupPremiumSystem();
+
+        // 🔥 ATTENDI LICENSE READY
+        if (window.app.license?.whenReady) {
+            try {
+                await window.app.license.whenReady();
+            } catch (e) {}
+        }
+
+        // 🔥 AGGIORNA UI DOPO VERIFY
+        if (window.app.updateLicenseStatus) {
+            window.app.updateLicenseStatus();
+        }
+
+        // 🔥 SBLOCCA PREMIUM
+        if (window.app.license?.hasFullPremiumAccess?.()) {
+
+            if (window.app.enablePremiumFeatures) {
+                window.app.enablePremiumFeatures();
             }
-            const reportBtn = document.getElementById('openReportBtn');
-            if (reportBtn) reportBtn.focus();
-        }, 80);
+
+            const banner = document.getElementById('premiumBanner');
+            if (banner) banner.style.display = 'none';
+        }
+    }
+}, 150);
     }
 
     getBuildInfo() {
