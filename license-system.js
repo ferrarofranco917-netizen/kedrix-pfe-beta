@@ -400,8 +400,14 @@ class KedrixLicense {
         localStorage.setItem(this.storage.accessAllowed, this.state.accessAllowed === true ? 'true' : 'false');
         if (this.state.email) localStorage.setItem('bw-license-email', this.state.email);
         try {
-            window.dispatchEvent(new CustomEvent('kedrix-license-state-changed', { detail: { ...this.state } }));
-        } catch (_err) {}
+            window.dispatchEvent(new CustomEvent('kedrix-license-state-changed', {
+                detail: {
+                    accessAllowed: this.state.accessAllowed === true,
+                    status: this.state.status || 'missing',
+                    planInfo: this.getPlanInfo ? this.getPlanInfo() : null
+                }
+            }));
+        } catch (_eventError) {}
     }
 
     syncLegacyPremiumFlags(isAllowed) {

@@ -4383,35 +4383,13 @@ if (excelHeaderSelectEl) {
 
     openAnalysisReportFromShortcut() {
         if (typeof this.showTab === 'function') this.showTab('analysis');
-        setTimeout(async () => {
-    if (window.app && typeof window.app.setupPremiumSystem === "function") {
-
-        window.app.setupPremiumSystem();
-
-        // 🔥 ATTENDI LICENSE READY
-        if (window.app.license?.whenReady) {
-            try {
-                await window.app.license.whenReady();
-            } catch (e) {}
-        }
-
-        // 🔥 AGGIORNA UI DOPO VERIFY
-        if (window.app.updateLicenseStatus) {
-            window.app.updateLicenseStatus();
-        }
-
-        // 🔥 SBLOCCA PREMIUM
-        if (window.app.license?.hasFullPremiumAccess?.()) {
-
-            if (window.app.enablePremiumFeatures) {
-                window.app.enablePremiumFeatures();
+        setTimeout(() => {
+            if (typeof this.openReportModal === 'function') {
+                this.openReportModal();
             }
-
-            const banner = document.getElementById('premiumBanner');
-            if (banner) banner.style.display = 'none';
-        }
-    }
-}, 150);
+            const reportBtn = document.getElementById('openReportBtn');
+            if (reportBtn) reportBtn.focus();
+        }, 80);
     }
 
     getBuildInfo() {
@@ -13571,10 +13549,48 @@ function setupImportHandlers() {
             window.app.premiumSetupDone = true;
         };
 
+        window.addEventListener('kedrix-license-state-changed', () => {
+            try {
+                if (window.app && typeof window.app.updateLicenseStatus === 'function') {
+                    window.app.updateLicenseStatus();
+                }
+                if (window.app && typeof window.app.showPremiumBannerIfNeeded === 'function') {
+                    window.app.showPremiumBannerIfNeeded();
+                }
+                if (window.app?.license?.hasFullPremiumAccess?.()) {
+                    if (typeof window.app.enablePremiumFeatures === 'function') {
+                        window.app.enablePremiumFeatures();
+                    }
+                    const banner = document.getElementById('premiumBanner');
+                    if (banner) banner.style.display = 'none';
+                }
+            } catch (_eventError) {}
+        });
+
         // Avvia Premium system
-        setTimeout(() => {
+        setTimeout(async () => {
             if (window.app && typeof window.app.setupPremiumSystem === "function") {
                 window.app.setupPremiumSystem();
+
+                if (window.app.license && typeof window.app.license.whenReady === 'function') {
+                    try {
+                        await window.app.license.whenReady();
+                    } catch (_err) {}
+                }
+
+                if (typeof window.app.updateLicenseStatus === 'function') {
+                    window.app.updateLicenseStatus();
+                }
+
+                if (window.app.license && typeof window.app.license.hasFullPremiumAccess === 'function') {
+                    if (window.app.license.hasFullPremiumAccess()) {
+                        if (typeof window.app.enablePremiumFeatures === 'function') {
+                            window.app.enablePremiumFeatures();
+                        }
+                        const banner = document.getElementById('premiumBanner');
+                        if (banner) banner.style.display = 'none';
+                    }
+                }
             }
         }, 150);
     }
