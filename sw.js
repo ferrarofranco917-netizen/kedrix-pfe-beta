@@ -1,4 +1,4 @@
-const BW_SW_VERSION = '20260322_cf1';
+const BW_SW_VERSION = '20260326_endpointfix_01';
 const BW_CACHE = `kedrix-cache-${BW_SW_VERSION}`;
 const BW_CORE_ASSETS = [
   './',
