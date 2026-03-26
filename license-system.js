@@ -197,16 +197,42 @@ class KedrixLicense {
                     : ''
             };
 
-            const apiResult = (window.KedrixAPI && window.KedrixAPI.request)
-                ? await window.KedrixAPI.request(this.endpoint, payload, { meta: { route: 'check_license' } })
-                : null;
+            let apiResult = null;
+            let data = {};
 
-            let data = apiResult ? (apiResult.data || {}) : {};
-            if (!data || typeof data !== 'object') data = {};
+            try {
+                apiResult = (window.KedrixAPI && window.KedrixAPI.request)
+                    ? await window.KedrixAPI.request(this.endpoint, payload, { meta: { route: 'check_license' } })
+                    : null;
+            } catch (_apiError) {
+                apiResult = null;
+            }
+
+            data = apiResult ? (apiResult.data || {}) : {};
+            if (!data || typeof data !== 'object' || Object.keys(data).length === 0) {
+                const query = new URLSearchParams();
+                Object.entries(payload).forEach(([key, value]) => {
+                    if (value === undefined || value === null || value === '') return;
+                    query.set(key, String(value));
+                });
+
+                const fallbackUrl = `${this.endpoint}${this.endpoint.includes('?') ? '&' : '?'}${query.toString()}`;
+                const fallbackResponse = await fetch(fallbackUrl, {
+                    method: 'GET',
+                    credentials: 'omit',
+                    cache: 'no-store'
+                });
+                const fallbackText = await fallbackResponse.text();
+
+                try {
+                    data = JSON.parse(fallbackText);
+                } catch (_parseError) {
+                    throw new Error('license_check_parse_failed');
+                }
+            }
 
             const status = String(data.license_status || 'missing').trim() || 'missing';
-            const softAllow = !!data.soft_allow;
-            const accessAllowed = !!(data.access_allowed || softAllow || status === 'active' || status === 'soft_allow');
+            const accessAllowed = !!data.access_allowed;
 
             this.updateState({
                 email: data.email || normalizedEmail,
@@ -220,7 +246,6 @@ class KedrixLicense {
                 message: data.message || this.messageForStatus(status),
                 accessAllowed: accessAllowed
             });
-            this.notifyUiStateChanged();
 
             if (accessAllowed) {
                 if (window.KedrixSessionManager && window.KedrixSessionManager.refresh) {
@@ -256,7 +281,6 @@ class KedrixLicense {
                 checkedAt: new Date().toISOString()
             });
             this.syncLegacyPremiumFlags(false);
-            this.notifyUiStateChanged();
             if (window.KedrixLicenseGuard && window.KedrixLicenseGuard.softInvalidate) {
                 window.KedrixLicenseGuard.softInvalidate('network_error');
             }
@@ -333,7 +357,6 @@ class KedrixLicense {
 
         const labels = {
             pending: 'In attesa',
-            soft_allow: 'Attivo',
             expired: 'Scaduto',
             revoked: 'Revocato',
             suspended: 'Sospeso',
@@ -352,7 +375,6 @@ class KedrixLicense {
     messageForStatus(status) {
         const messages = {
             active: 'Accesso beta attivo.',
-            soft_allow: 'Accesso beta attivo.',
             pending: 'Richiesta ricevuta. L’accesso verrà attivato appena il tuo batch sarà aperto.',
             expired: 'La tua licenza beta è scaduta.',
             revoked: 'Il tuo accesso è stato revocato.',
@@ -361,29 +383,6 @@ class KedrixLicense {
             error: 'Impossibile verificare la licenza beta.'
         };
         return messages[status] || messages.missing;
-    }
-
-    notifyUiStateChanged() {
-        try {
-            if (window.app && typeof window.app.updateLicenseStatus === 'function') {
-                window.app.updateLicenseStatus();
-            }
-            if (window.app && typeof window.app.showPremiumBannerIfNeeded === 'function') {
-                window.app.showPremiumBannerIfNeeded();
-            }
-            window.dispatchEvent(new CustomEvent('kedrix:license-updated', {
-                detail: {
-                    email: this.state.email || '',
-                    testerId: this.state.testerId || '',
-                    status: this.state.status || 'missing',
-                    accessAllowed: this.state.accessAllowed === true,
-                    type: this.state.type || 'beta',
-                    batch: this.state.batch || '',
-                    expiresAt: this.state.expiresAt || '',
-                    message: this.state.message || ''
-                }
-            }));
-        } catch (_err) {}
     }
 
     updateState(nextState) {
