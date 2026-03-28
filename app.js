@@ -13299,42 +13299,61 @@ function setupImportHandlers() {
     // ========== METODI PREMIUM ==========
     if (window.app && !window.app.premiumSetupDone) {
         window.app.updateLicenseStatus = () => {
-            if (!window.app.license) {
-                console.warn('⚠️ License system non disponibile');
-                return;
-            }
+    if (!window.app.license) {
+        console.warn('⚠️ License system non disponibile');
+        return;
+    }
 
-            const licenseStatus = document.getElementById('licenseStatus');
-            if (!licenseStatus) return;
+    const licenseStatus = document.getElementById('licenseStatus');
+    if (!licenseStatus) return;
 
-            const planInfo = window.app.license.getPlanInfo();
-            const status = String(window.app.license.getStatus ? window.app.license.getStatus() : '').toLowerCase();
-            const accessAllowed = !!(window.app.license.hasFullPremiumAccess && window.app.license.hasFullPremiumAccess());
-            const badge = licenseStatus.querySelector('.license-badge, .badge');
+    const planInfo = window.app.license.getPlanInfo();
+    const rawStatus = window.app.license.getStatus ? window.app.license.getStatus() : '';
+    const status = String(rawStatus || '').toLowerCase().trim();
 
-            const classMap = {
-                active: 'premium',
-                pending: 'free',
-                expired: 'free',
-                revoked: 'free',
-                suspended: 'free',
-                missing: 'free',
-                error: 'free'
-            };
+    // FIX SOLO UI BADGE:
+    // considera "attivo" anche il caso in cui lo status sia già active
+    // ma il boolean accessAllowed non sia ancora allineato.
+    const hasPremiumAccess = !!(window.app.license.hasFullPremiumAccess && window.app.license.hasFullPremiumAccess());
+    const isUiActive = hasPremiumAccess || status === 'active';
 
-            licenseStatus.className = `license-status ${classMap[status] || (accessAllowed ? 'premium' : 'free')} beta-combo-status`;
+    const badge = licenseStatus.querySelector('.license-badge, .badge');
 
-            if (badge) {
-                badge.className = `badge ${accessAllowed ? 'premium' : 'free'} beta-combo`;
-                badge.textContent = accessAllowed
-                    ? `${(planInfo.name || 'Beta').toUpperCase()}${planInfo.status ? ' • ' + String(planInfo.status).toUpperCase() : ''}`
-                    : `BETA • ${String(planInfo.status || 'NON ATTIVO').toUpperCase()}`;
-            }
+    const classMap = {
+        active: 'premium',
+        pending: 'free',
+        expired: 'free',
+        revoked: 'free',
+        suspended: 'free',
+        missing: 'free',
+        error: 'free'
+    };
 
-            licenseStatus.title = [planInfo.status, planInfo.remaining].filter(Boolean).join(' — ');
-        };
+    licenseStatus.className = `license-status ${classMap[status] || (isUiActive ? 'premium' : 'free')} beta-combo-status`;
 
+    if (badge) {
+        badge.className = `badge ${isUiActive ? 'premium' : 'free'} beta-combo`;
 
+        if (isUiActive) {
+            const badgeName = String(planInfo?.name || 'Beta').toUpperCase();
+            const badgeStatus = String(
+                (planInfo && planInfo.status && String(planInfo.status).trim())
+                    ? planInfo.status
+                    : 'Attivo'
+            ).toUpperCase();
+
+            badge.textContent = `${badgeName} • ${badgeStatus}`;
+        } else {
+            badge.textContent = `BETA • ${String(planInfo?.status || 'NON ATTIVO').toUpperCase()}`;
+        }
+    }
+
+    const titleStatus = isUiActive
+        ? (planInfo?.status || 'Attivo')
+        : (planInfo?.status || 'Non attivo');
+
+    licenseStatus.title = [titleStatus, planInfo?.remaining].filter(Boolean).join(' — ');
+};
         window.app.normalizePremiumModalUI = () => {
             const modal = document.getElementById('premiumModal');
             if (!modal) return;
