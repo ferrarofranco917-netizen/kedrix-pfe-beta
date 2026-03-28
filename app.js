@@ -9135,11 +9135,8 @@ formatDaysToYearsMonthsDays(days) {
         if (newSubCategory === null) return;
         const trimmedSubCategory = String(newSubCategory).trim();
 
-        if (!this.getAllCategories().includes(trimmedCat)) {
-            this.customCategories.push(trimmedCat);
-            this.saveCustomCategories();
-            this.updateAllCategorySelects();
-        }
+        this.ensureCategoryExists(trimmedCat, trimmedSubCategory);
+        this.updateAllCategorySelects();
 
         exp.name = String(newName).trim() || exp.name;
         exp.amount = newAmount;
@@ -10662,6 +10659,19 @@ document.documentElement.style.setProperty('--accent-gradient',
 
     // ========== GESTIONE CATEGORIE PERSONALIZZATE ==========
     saveCustomCategories() {
+        const currentCustoms = Array.isArray(this.customCategories) ? this.customCategories : [];
+        currentCustoms.forEach(cat => {
+            const label = String(cat || '').trim();
+            if (!label) return;
+            if (!this.getCategoryTree().some(item => item.label === label)) {
+                this.categoryTree.push({
+                    id: this.slugifyCategoryLabel(label),
+                    label,
+                    isDefault: false,
+                    subcategories: []
+                });
+            }
+        });
         this.saveCategoryTree();
     }
 
@@ -11033,6 +11043,7 @@ showImportReview(importedExpenses) {
                 this.ensureCategoryExists(exp.category || 'Altro', exp.subCategory || '');
                 this.learnCategory(exp.name, exp.category || 'Altro', exp.subCategory || '');
             });
+            this.updateAllCategorySelects();
             cleanup();
             resolve(importedExpenses);
         };
@@ -11196,6 +11207,7 @@ showImportReview(importedExpenses) {
                             }
 
                             this.saveData();
+                            this.updateAllCategorySelects();
                             this.updateUI();
                             this.updateChart();
 
@@ -11699,6 +11711,7 @@ const allLines = relevantRows.map((row, rowIndex) =>
     }
 
     this.saveData();
+    this.updateAllCategorySelects();
 
 // Forza l'aggiornamento del periodo
 if (tempIncomes.length > 0) {
@@ -12029,6 +12042,7 @@ ${this.t('duplicatesSkipped', { dup: _excelSkippedDuplicates })}`
                 sourceType: 'manual',
                 allowDuplicate: duplicateDecision.allowDuplicate
             });
+            this.ensureCategoryExists(category, subCategory);
             this.learnCategory(description, category, subCategory);
             this.saveData();
             this.updateUI();
@@ -12079,6 +12093,7 @@ ${this.t('duplicatesSkipped', { dup: _excelSkippedDuplicates })}`
                 sourceType: 'manual',
                 allowDuplicate: true
             });
+            this.ensureCategoryExists(category, draftRecord.subCategory || '');
             this.learnCategory(description, category, draftRecord.subCategory || '');
             this.saveData();
             this.updateUI();
