@@ -13336,13 +13336,10 @@ function setupImportHandlers() {
 
         if (isUiActive) {
             const badgeName = String(planInfo?.name || 'Beta').toUpperCase();
-            const badgeStatus = String(
-                (planInfo && planInfo.status && String(planInfo.status).trim())
-                    ? planInfo.status
-                    : 'Attivo'
-            ).toUpperCase();
+const rawPlanStatus = String(planInfo?.status || '').trim();
+const badgeStatus = status === 'active' ? 'ATTIVO' : (rawPlanStatus || 'NON ATTIVO').toUpperCase();
 
-            badge.textContent = `${badgeName} • ${badgeStatus}`;
+badge.textContent = `${badgeName} • ${badgeStatus}`;
         } else {
             badge.textContent = `BETA • ${String(planInfo?.status || 'NON ATTIVO').toUpperCase()}`;
         }
