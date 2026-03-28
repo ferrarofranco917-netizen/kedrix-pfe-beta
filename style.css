@@ -14889,3 +14889,12 @@ html[data-theme="dark"] .premium-banner--fintech,
         padding: 7px 9px;
     }
 }
+#betaSettingsBadge {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
